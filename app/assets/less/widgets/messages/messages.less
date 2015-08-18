@@ -1,0 +1,39 @@
+.messages {
+	position: fixed;
+    width: 55%;
+    margin: 0 11%;
+    z-index: 50;
+
+	.message {
+		width: 35%;
+		padding: 15px 20px;
+		font-size: 13px;
+		text-align: center;
+		line-height: 20px;
+		background: @darktext;
+		color: @dark;
+		font-weight: 600;
+
+		&.message-popup {
+			.animated(0.2s, 0s);
+			.border-radius(0px 10px 0px 10px);
+			.box-shadow(-1px 1px 5px rgba(42, 44, 42, 0.5));
+			margin: 0 23%;
+			z-index: 50;
+			top: 35px;
+			position: fixed;
+			float: left;
+		}
+
+		&.error {
+			.animated(0.2s, 0s);
+			.border-radius(0px 10px 0px 10px);
+			.box-shadow(-1px 1px 5px rgba(42, 44, 42, 0.5));
+			margin: 0 auto;
+			background: @dark;
+			color: @darktext;
+			font-weight: 500;
+			width: 100%;
+		}
+	}
+}

@@ -1,0 +1,18 @@
+Options -Indexes
+AddDefaultCharset utf-8
+
+<IfModule mod_deflate.c>
+    <filesMatch "\.(js|css|html|php|png|jpg|gif|svg)$">
+        SetOutputFilter DEFLATE
+    </filesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /app
+
+	RewriteRule ^index\.php$ - [L]
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^.*$ index.php [NC,L] [NC]
+</IfModule>

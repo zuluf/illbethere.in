@@ -1,0 +1,95 @@
+.home {
+	.animated(0.5s, 0s);
+
+	.home-form {
+		position: relative;
+		margin: 1% 0 0 5%;
+		float: left;
+		width: 100%;
+		z-index: 16;
+
+		.location {
+
+			.transition(all 0.1s ease-in);
+			.box-shadow(-3px 1px 15px rgba(0, 0, 0, 0.5));
+			background: @dark;
+			float: left;
+			width: 70%;
+			height: 40px;
+			margin: 20% 11%;
+
+			input {
+				// .border-radius(0 8px 0 0);
+				padding: 10px 20px;
+				width: 100%;
+				float: left;
+				line-height: 23px;
+				font-size: 17px;
+			}
+
+			&.has-content {
+				margin: 0;
+				width: 63%;
+				position: fixed;
+
+				input {
+					line-height: 20px;
+					font-size: 15px;
+				}
+			}
+
+			.loader {
+				.animated(0.5s, 0.9s);
+				position: absolute;
+				width: 30px;
+				height: 30px;
+				background: transparent url(../img/loader.gif) no-repeat center center;
+				z-index: 60;
+				background-size: cover;
+				margin-left: -45px;
+				margin-top: 5px;
+				opacity: 0.9;
+				display: none;
+
+				&.load {
+					display: block!important;
+				}
+			}
+		}
+
+		.time {
+			// .border-radius(0 8px 8px 8px);
+			.box-shadow(3px 3px 15px rgba(0, 0, 0, 0.5));
+			background: @dark;
+			padding: 20px 50px 20px 35px;
+			float: right;
+			width: 85%;
+			min-height: 400px;
+			opacity: 0.9;
+		}
+	}
+
+	.map {
+		.animated(0.4s, 0s);
+		display: none;
+		left: 0;
+		top: 0;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 15;
+
+		.home-map {
+			opacity: 0.8;
+			width: 100%;
+			height: 100%;
+			float: left;
+		}
+	}
+
+	.google-link {
+		left: 100%!important;
+		bottom: 15px!important;
+		margin-left: -70px!important;
+	}
+}

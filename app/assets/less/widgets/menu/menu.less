@@ -1,0 +1,15 @@
+.menu {
+	a {
+		.transition(border-bottom 0.1s ease-in);
+		.transition(color 0.1s ease-in);
+		border-bottom: 1px solid transparent;
+		margin: 0 3px;
+		font-size: 13px;
+		padding: 5px 10px;
+
+		&:hover, &.active {
+			color: @greentext;
+			border-bottom: 1px solid @greentext;
+		}
+	}
+}

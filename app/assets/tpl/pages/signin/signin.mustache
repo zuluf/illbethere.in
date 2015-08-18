@@ -1,0 +1,15 @@
+<div id="signin" class="page signin">
+	<div class="login js-login-form">
+		<h3>Sign in</h3>
+		<input type="email" data-validate="!empty;email" name="email" autocomplete="off" value="" placeholder="Email" class="" />
+		<input type="password" data-validate="!empty" name="password" autocomplete="off" value="" placeholder="Password" class="" />
+		<a href="#" class="js-signin btn fr mt10"><span>Sign In</span></a> <a href="{{ibt.app}}/recover-password/" class="js-page fr mt10 mr10">Forgot Password?</a>
+	</div>
+	<div class="register js-register-form">
+		<h3>Sign up if you don't have an account</h3>
+		<input type="email" data-validate="!empty;email" name="email" autocomplete="off" value="" placeholder="Email" class="" />
+		<input type="password" data-validate="!empty" name="password" autocomplete="off" value="" placeholder="Password" class="" />
+		<input type="password" data-validate="!empty;={password}" name="repeat-password" autocomplete="off" value="" placeholder="Repeat Password" class="" />
+		<a href="#" class="js-register btn fr mt10"><span>Register</span></a>
+	</div>
+</div>

@@ -1,0 +1,16 @@
+{
+	"locale_data" : {
+		"ibt" : {
+			"" : {
+				"domain" : "ibt",
+				"lang" : "en",
+				"plural_forms" : "nplurals=2; plural=(n != 1);"
+			},
+
+			"data": ["data center"],
+			"signin": ["Sign In"],
+			"where to go": ["Where do you wanna go"]
+		}
+	},
+	"domain" : "ibt"
+}

@@ -1,0 +1,46 @@
+.home-drop {
+	position : fixed;
+
+	.drop {
+		list-style: none;
+		position: absolute;
+		left: 0;
+		float: left;
+		text-align: left;
+		top: 42px;
+		background: transparent;
+		padding: 0;
+		min-width: 30%;
+		width: 300px;
+		.box-shadow(-3px 2px 6px rgba(0,0,0,.5));
+
+		li {
+			border-bottom: 1px solid transparent;
+			width: 100%;
+			float: left;
+			background: @dark;
+			margin-bottom: 1px;
+
+			&:last-child {
+				border-bottom: none;
+				margin-bottom: 0px;
+			}
+
+			a {
+				.truncate();
+				float: left;
+				width: 100%;
+				padding: 10px 50px 10px 15px;
+				font-size: 13px;
+				line-height: 15px;
+				color: @darktext;
+				text-decoration: none;
+
+				&:hover {
+					// text-decoration: underline;
+					color: @darkgreen;
+				}
+			}
+		}
+	}
+}

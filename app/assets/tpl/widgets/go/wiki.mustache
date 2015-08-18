@@ -1,0 +1,17 @@
+<div class="wiki-info">
+	{{#if fullurl}}
+		<h2><a href="{{fullurl}}" target="_blank">{{title}}<span>{{{parseWiki}}}</span></a></h2>
+		<span>{{extract}}</span>
+	{{/if}}
+
+	{{#if geosearch.length}}
+		<ul class="{{#unless fullurl}}related{{/unless}}">
+
+			<li class="nearby">Nearby Articles <span>{{{parseWiki}}}</span></li>
+
+			{{#geosearch}}
+				<li><a href="{{fullurl}}" target="_blank">{{title}}</a></li>
+			{{/geosearch}}
+		</ul>
+	{{/if}}
+</div>

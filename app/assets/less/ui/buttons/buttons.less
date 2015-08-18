@@ -1,0 +1,20 @@
+.btn {
+	.border-radius(0px 3px 0px 3px);
+	border: 1px solid #80B300;
+	padding: 5px 15px;
+	font-size: 11px;
+	color: @dark;
+	background: @green;
+	line-height: 15px;
+	text-transform: uppercase;
+
+	&:hover {
+		.box-shadow(0px -10px 5px rgba(0, 0, 0, 0.1) inset);
+		color: @dark!important;
+	}
+
+	&.btn-load {
+		text-indent: -100%;
+		background: url(../img/loader.gif) no-repeat center center;
+	}
+}

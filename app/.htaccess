@@ -1,0 +1,41 @@
+<IfModule mod_headers.c>
+	<FilesMatch "\.(bmp|css|flv|gif|ico|jpg|jpeg|js|pdf|png|svg|swf|tif|tiff)$">
+		Header unset ETag
+		Header set Last-Modified "Tue, 18 Aug 2015 17:24:14 GMT"
+		Header set Cache-Control "public, max-age=31536000"
+		Header set Expires "Mon, 18 Jul 2016 17:24:14 GMT"
+	</FilesMatch>
+</IfModule>
+FileETag None
+<IfModule mod_deflate.c>
+	# force deflate for mangled headers
+	# developer.yahoo.com/blogs/ydn/posts/2010/12/pushing-beyond-gzipping/
+	<IfModule mod_setenvif.c>
+		<IfModule mod_headers.c>
+			SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)s*,?s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
+			RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
+		</IfModule>
+	</IfModule>
+
+	# HTML, TXT, CSS, JavaScript, JSON, XML, HTC:
+	<IfModule mod_filters.c>
+		FilterDeclare   COMPRESS
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/html
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/css
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/plain
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/x-component
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/javascript
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/json
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/xhtml+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/rss+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/atom+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/vnd.ms-fontobject
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/svg+xml
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/x-font-ttf
+		FilterProvider  COMPRESS  DEFLATE resp=Content-Type $font/opentype
+		FilterChain     COMPRESS
+		FilterProtocol  COMPRESS  DEFLATE change=yes;byteranges=no
+	</IfModule>
+</IfModule>
