@@ -83,7 +83,7 @@ class Data {
 
 		if ( ! static::connect() ) {
 			return (object) array(
-				'error' => 'Could not connect to database',
+				'error' => current ( Errors::get ( 'database' ) ),
 				'error_list' => array ()
 			);
 		}

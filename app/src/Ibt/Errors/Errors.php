@@ -24,13 +24,18 @@ class Errors {
 	 */
 	protected static $_logFile = 'log';
 
-
 	/**
-	 * Returns current errors collection
+	 * Returns current errors collection, or a specific type errors for the given type
 	 *
+	 * @param  string  $type
 	 * @return array
 	 */
-	public static function get () {
+	public static function get ( $type = false ) {
+
+		if ( is_string( $type ) && ! empty( $type ) ) {
+			return isset ( static::$_errors [ $type ] ) ? static::$_errors[ $type ] : array ();
+		}
+
 		return static::$_errors;
 	}
 
