@@ -4,12 +4,38 @@ namespace Ibt\Models;
 
 use Ibt\Models;
 
+/**
+ *	Class Ibt\Models\Wiki
+ *
+ */
 class Wiki extends Models {
 
+	/**
+	 * Wiki model table name
+	 *
+	 * @var string
+	 */
 	protected static $_table = 'ibt_wiki';
+
+	/**
+	 * Wiki model table primary key
+	 *
+	 * @var string
+	 */
 	protected static $_primary = 'wiki_id';
+
+	/**
+	 * Static instance property for holding the model instance
+	 *
+	 * @var \Ibt\Models\Wiki
+	 */
 	protected static $_instance;
 
+	/**
+	 * Renders front-end application config, templates, locale and current user
+	 *
+	 * @return void
+	 */
 	public static function get ( $where = array(), $object = false ) {
 		$wiki = parent::get( $where, $object );
 

@@ -10,12 +10,34 @@ use \Ibt\Locale;
  */
 class Templates {
 
+	/**
+	 * Static templates collection
+	 *
+	 * @var array
+	 */
 	private static $_templates = array();
 
+	/**
+	 * Holding the current template engine instance
+	 *
+	 * @var Mustache_Engine
+	 */
 	private static $_engine;
 
+	/**
+	 * Template files extension
+	 *
+	 * @var string
+	 */
 	private static $_ext = '.mustache';
 
+	/**
+	 * Returns the rendered template file as pure html
+	 *
+	 * @param  string      	  $template Path to the template file to render
+	 * @param  array|object   $data     Data to pass to the template
+	 * @return string
+	 */
 	public static function render ( $template = false , $data = array() ) {
 
 		$template = __templates__ . $template . static::$_ext;
@@ -32,10 +54,21 @@ class Templates {
 		return "";
 	}
 
-	public static function get ( $templates = "" ) {
-		return static::load(new DirectoryIterator( __templates__ . $templates ) );
+	/**
+	 * Returns array of the template file content from tthe given directory
+	 *
+	 * @param  string      	  $dir Path to the template directory to load
+	 * @return array
+	 */
+	public static function get ( $dir = "" ) {
+		return static::load(new DirectoryIterator( __templates__ . $dir ) );
 	}
 
+	/**
+	 * Returns the current template rendering engine; initializes the engine
+	 *
+	 * @return Mustache_Engine
+	 */
 	private static function engine(){
 		if (!static::$_engine) {
 			if ( !class_exists( 'Mustache_Autoloader' ) ) {
@@ -55,6 +88,12 @@ class Templates {
 		return static::$_engine;
 	}
 
+	/**
+	 * Recursively loads template contents from the given directory, and returns the array ( template/file/path => template/file/content )
+	 *
+	 * @param  DirectoryIterator
+	 * @return array
+	 */
 	private static function load (DirectoryIterator $iterator) {
 		$templates = array();
 
@@ -73,7 +112,7 @@ class Templates {
 				$subit = new DirectoryIterator($child->getPathname());
 				$templates = static::load($subit);
 			} else {
-				static::$_templates[$name] = file_get_contents($child->getPathname());
+				static::$_templates[$name] = file_get_contents( $child->getPathname() );
 			}
 		}
 

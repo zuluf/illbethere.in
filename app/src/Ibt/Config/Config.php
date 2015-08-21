@@ -27,8 +27,8 @@ class Config {
 
 		$_config = static::load();
 
-		if ( ! empty( $config ) && isset( $_config->{$config} ) ) {
-			return $_config->{$config};
+		if ( ! empty( $config ) && isset( $_config->{ $config } ) ) {
+			return $_config->{ $config };
 		}
 
 		return $_config;

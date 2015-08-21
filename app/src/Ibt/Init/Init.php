@@ -3,11 +3,10 @@
 namespace Ibt;
 
 use \Ibt\User;
-use \Ibt\Locale;
+use \Ibt\Layout;
 use \Ibt\Templates;
 use \Ibt\Events;
 use \Ibt\Router;
-use \Ibt\Scripts;
 
 /**
  *	Class Init
@@ -15,28 +14,36 @@ use \Ibt\Scripts;
  */
 class Init {
 
+	/**
+	 * Initiates the applicaton; Loads app config, prepares global user object, registers layout events
+	 * starts the router and registers the shutdown function for cleaning up the app
+	 *
+	 * @return void
+	 */
 	public static function app () {
 
 		Config::load();
+
 		User::load();
 
-		Scripts::register();
+		Layout::register();
 
-		Events::register( 'render_content', function () {
-			echo Events::fire( 'content' );
-		});
-
-		Events::fire('init');
+		Events::fire( 'init' );
 
 		Router::fire();
 
-		if( function_exists('register_shutdown_function') ){
+		if ( function_exists('register_shutdown_function') ) {
 			register_shutdown_function( function () {
 				return static::shutdown();
 			});
 		}
 	}
 
+	/**
+	 * Triggers shutdown event callbacks (database celanup, ...)
+	 *
+	 * @return void
+	 */
 	public static function shutdown () {
 		Events::fire ( 'shutdown' );
 	}

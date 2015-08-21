@@ -14,31 +14,53 @@ use \Ibt\Templates;
  */
 class Scripts {
 
+	/**
+	 * Static script url's collection
+	 *
+	 * @var array
+	 */
 	protected static $_scripts  = array();
 
+	/**
+	 * Default script file extension
+	 *
+	 * @var array
+	 */
 	protected static $_ext = '.js';
 
-
-	public static function get ( $scripts = "" ) {
+	/**
+	 * Returns an array of url's for the found javascript files
+	 *
+	 * @param  string  $dir app/assets/js/{directory} to iterate
+	 * @return array
+	 */
+	public static function get ( $dir = "" ) {
 
 		static::$_scripts = array();
 
-		static::iterate( new DirectoryIterator( __scripts__ . $scripts ) );
+		static::iterate( new DirectoryIterator( __scripts__ . $dir ) );
 
 		return array_keys( static::$_scripts );
 	}
 
+	/**
+	 * Registers a script event for loading the script files on runtime
+	 *
+	 * @return void
+	 */
 	public static function register () {
-
-		Events::register( 'header', function () {
-			return static::header();
-		});
 
 		Events::register( 'scripts', function () {
 			return static::load();
 		});
 	}
 
+	/**
+	 * Called by the static::get method to perform a recursive search for script files on the given DirectoryIterator
+	 *
+	 * @param  DirectoryIterator
+	 * @return array
+	 */
 	private static function iterate (DirectoryIterator $iterator) {
 		$scripts = array();
 
@@ -61,23 +83,11 @@ class Scripts {
 		return $scripts;
 	}
 
-	public static function header () {
-
-		$config = array(
-			'page' => Router::getPage(),
-			'user' => User::get(),
-			'locales' => Locale::load( "en-US" ),
-			'templates' => Templates::get( 'widgets' ),
-			'config' => array(
-				'api' => __host__ . 'api/',
-				'app' => __host__,
-				'gkey' => __google_key__
-			)
-		);
-
-		echo '<script type="text/javascript"> window.ibt = '. json_encode( $config, true ) .'; </script>';
-	}
-
+	/**
+	 * Outputs the <script></script> tags for loading the application javascript libs
+	 *
+	 * @return void
+	 */
 	public static function load () {
 		$load = array(
 			'https://maps.googleapis.com/maps/api/js?key=' . __google_key__

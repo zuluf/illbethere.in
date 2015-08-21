@@ -13,12 +13,27 @@ use \Ibt\Helpers;
  */
 class Router {
 
+	/**
+	 * Static request instance
+	 *
+	 * @var object
+	 */
 	public static $_request;
 
+	/**
+	 * Returns the current request class name
+	 *
+	 * @return string
+	 */
 	public static function getPage () {
 		return static::$_request->page;
 	}
 
+	/**
+	 * Parses the current request, and triggers the response
+	 *
+	 * @return string
+	 */
 	public static function fire () {
 
 		$request = Request::get();
@@ -34,10 +49,15 @@ class Router {
 
 		static::$_request = $request;
 
-		static::doLayout();
+		static::response();
 	}
 
-	private static function register() {
+	/**
+	 * Triggers the cuurent request page class method; registers the error content callback
+	 *
+	 * @return void
+	 */
+	private static function render() {
 
 		$callable = array ( static::$_request->class, 'content' );
 
@@ -52,9 +72,14 @@ class Router {
 		}, array(), -1);
 	}
 
-	private static function doLayout() {
+	/**
+	 * Triggers the page layout, return's it to the caller or to the browser if page is requested on ajax
+	 *
+	 * @return mixed
+	 */
+	private static function response () {
 
-		static::register();
+		static::render();
 
 		if ( static::$_request->type === 'application/json' ) {
 
@@ -72,14 +97,19 @@ class Router {
 			)));
 
 		} else {
-			return Layout::load(array(
+			return Layout::load( array(
 				'header' => true,
 				'content' => true,
 				'footer' => true
-			));
+			) );
 		}
 	}
 
+	/**
+	 * Renders the accumulated errors to the page content
+	 *
+	 * @return string
+	 */
 	public static function errors ( $content = "" ) {
 
 		if ( Errors::hasErrors() ) {

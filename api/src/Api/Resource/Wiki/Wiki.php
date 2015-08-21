@@ -2,14 +2,35 @@
 
 namespace Api\Resource;
 
+use \Ibt\Errors;
 use \Ibt\Models\Locations;
 use \Ibt\Models\Wiki as Wikies;
 
+/**
+ * Class Api\Resource\Wiki
+ *
+ */
 class Wiki {
 
+	/**
+	 * Wikipedia default api url
+	 *
+	 * @var string;
+	 */
 	const __wiki_api__ = "https://en.wikipedia.org/w/api.php?format=json&action=query&continue&";
+
+	/**
+	 * Wikivoyage default api url
+	 *
+	 * @var string;
+	 */
 	const __voyage_api__ = "https://en.wikivoyage.org/w/api.php?format=json&action=query&continue&";
 
+	/**
+	 * Returns the given location wikipedia|wikivoyage info
+	 *
+	 * @return array
+	 */
 	public static function location ( $location_id = false ) {
 
 		if ( empty($location_id) ) {
@@ -31,6 +52,11 @@ class Wiki {
 		return array();
 	}
 
+	/**
+	 * Triggers a wikipedia api search for the given location and inserts the new wikipedia info to the local database
+	 *
+	 * @return object
+	 */
 	public static function addLocationWiki ( $location = false ) {
 
 		$page = static::wikiGeosearch( $location );
@@ -49,6 +75,13 @@ class Wiki {
 		}
 	}
 
+	/**
+	 * Performs a wikipedia|wikivoyage api geosearch for the given location longitude/latitude info
+	 * The function will first type the wikivoyage api, and if no wikivoyage page is found, function try's
+	 * with the wikipedia
+	 *
+	 * @return object
+	 */
 	public static function wikiGeosearch ( $location = false ) {
 		if ( empty( $location ) ) {
 			return false;
@@ -175,7 +208,7 @@ class Wiki {
 							'title' => $location->name,
 							'extract' => '',
 							'fullurl' => '',
-							'pageid' => '',
+							'pageid' => 0,
 						);
 					}
 				}
@@ -185,14 +218,29 @@ class Wiki {
 		return false;
 	}
 
+	/**
+	 * Triggers the wikipedia api request
+	 *
+	 * @return object
+	 */
 	public static function getWiki ( $params = array() ) {
 		return static::get( $params, static::__wiki_api__);
 	}
 
+	/**
+	 * Triggers the wikivoyage api request
+	 *
+	 * @return object
+	 */
 	public static function getVoyage ( $params = array() ) {
 		return static::get( $params, static::__voyage_api__);
 	}
 
+	/**
+	 * Fires a request to wiki with the header info set
+	 *
+	 * @return object
+	 */
 	public static function get ( $params = array(), $url = false ) {
 		if ( empty ( $params ) ) {
 			return false;

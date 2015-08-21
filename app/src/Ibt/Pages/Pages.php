@@ -49,7 +49,7 @@ class Pages {
 	 * @param  array $data   request query data
 	 * @return bool
 	 */
-	public static function content ( $params = array (), $data = array() ) {
+	public static function content ( $params = array (), $data = array () ) {
 		static::$_params = $params;
 		static::$_data = $data;
 

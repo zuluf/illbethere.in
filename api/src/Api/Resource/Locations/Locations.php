@@ -5,8 +5,17 @@ namespace Api\Resource;
 use \Ibt\Models\Locations as Location;
 use \Ibt\Models\Countries;
 
+/**
+ * Class Api\Resource\Locations
+ *
+ */
 class Locations {
 
+	/**
+	 * Finds the \Ibt\Models\Locations collection for the given query string
+	 *
+	 * @return array
+	 */
 	public static function find ( $query = false ) {
 
 		$locations = array();
@@ -35,7 +44,7 @@ class Locations {
 						else 9
 					end ASC, country_long ASC
 					LIMIT 15";
-
+			\Ibt\Errors::log ($query);
 			$locations = Location::fetch( $query );
 
 			foreach($locations as $index => $location) {
@@ -51,11 +60,16 @@ class Locations {
 		return array_values( $locations );
 	}
 
+	/**
+	 * Returns the \Ibt\Models\Locations object for the given location_id or false if there is no match
+	 *
+	 * @return mixed
+	 */
 	public static function get ( $location_id = false ) {
 		if ( ! empty ($location_id) ) {
 			return Location::get( array('location_id' => $location_id), true );
 		}
 
-		return array();
+		return false;
 	}
 }

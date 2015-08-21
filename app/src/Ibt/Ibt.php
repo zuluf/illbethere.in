@@ -2,6 +2,9 @@
 
 namespace Ibt;
 
+/**
+ * Registers the Ibt namespace class file load function
+ */
 spl_autoload_register( function ( $class ) {
 
 	if ( class_exists( $class ) || interface_exists( $class ) ) {

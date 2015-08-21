@@ -2,14 +2,17 @@
 
 namespace Ibt;
 
-use \Ibt\Errors;
-
 /**
  *	Class Locale
  *
  */
 class Locale {
 
+	/**
+	 * Static default locale config
+	 *
+	 * @var array
+	 */
 	private static $_locale = array (
 		'domain' => 'ibt',
 		'locale_data' => array (
@@ -23,10 +26,25 @@ class Locale {
 		)
 	);
 
+	/**
+	 * Static locale domain
+	 *
+	 * @var string
+	 */
 	private static $_domain;
 
+	/**
+	 * Static messages collection
+	 *
+	 * @var array
+	 */
 	private static $_messages;
 
+	/**
+	 * Loads locale json file, and populates static domain and messages class properties
+	 *
+	 * @return array
+	 */
 	public static function load ( $lang = "en-US" ) {
 
 		if ( empty ( static::$_messages ) ) {
@@ -42,6 +60,11 @@ class Locale {
 		return static::$_locale;
 	}
 
+	/**
+	 * Returns the loaded locale text for a given string, or the string if the locale message is not defined
+	 *
+	 * @return string
+	 */
 	public static function gettext ( $locale = "" ) {
 		$translate = isset( static::$_messages[$locale] ) && is_array(static::$_messages[$locale]) ? static::$_messages[$locale] : $locale;
 

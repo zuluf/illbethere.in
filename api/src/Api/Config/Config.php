@@ -6,8 +6,8 @@ use \Ibt\Config as IbtConfig;
 
 /**
  * Class Api\Config
+ *
  */
-
 class Config {
 
 	public static function load () {
