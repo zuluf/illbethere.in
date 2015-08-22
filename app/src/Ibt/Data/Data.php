@@ -150,10 +150,75 @@ class Data {
 	 * @return bool
 	 */
 	public static function escape ( $string = "" ) {
+
+		if ( ! is_string( $string ) ) {
+			return $string;
+		}
+
+		if ( empty( $string ) ) {
+			return "";
+		}
+
+		$string = strip_tags( $string );
+		$string = str_replace( "'%s'", '%s', $string ); // in case someone mistakenly already singlequoted it
+		$string = str_replace( '"%s"', '%s', $string ); // doublequote unquoting
+		$string = preg_replace( '|(?<!%)%f|' , '%F', $string ); // Force floats to be locale unaware
+		$string = preg_replace( '|(?<!%)%s|', "'%s'", $string ); // quote the strings, avoiding escaped strings like %%s
+
 		if ( static::connect() ) {
 			return static::$_base->real_escape_string( $string );
 		}
 
 		return $string;
+	}
+
+	/**
+	 * Prepares mysqli statement and binds the data to the query params
+	 *
+	 * @param  string  $query
+	 * @param  array   $data
+	 * @return mysqli_stmt|bool
+	 */
+	public static function prepare ( $query = "", $data = array () ) {
+
+		if ( empty ( $query ) || empty( $data ) ) {
+			return $query;
+		}
+
+		if ( ! static::connect() ) {
+			return $query;
+		}
+
+		$types = "";
+		$values = array();
+
+		foreach ( $data as $column => $value ) {
+			$types .= gettype( $value )[0];
+			$$column = static::escape( $value );
+			$values[] = &$$column;
+		}
+
+		array_unshift ( $values, $types );
+
+		$statement = static::$_base->prepare( $query );
+
+		if ( ! empty ( $statement ) ) {
+			call_user_func_array( array ( $statement, 'bind_param' ), $values );
+		}
+
+		return $statement;
+	}
+
+	/**
+	 * Returns last query error message; false on no errors
+	 *
+	 * @return string|bool
+	 */
+	public static function errorMessage () {
+		if ( static::isConnected() ) {
+			return isset ( static::$_base->error ) && ! empty( static::$_base->error ) ? static::$_base->error : false;
+		}
+
+		return false;
 	}
 }

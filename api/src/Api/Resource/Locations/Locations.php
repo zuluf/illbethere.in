@@ -44,7 +44,7 @@ class Locations {
 						else 9
 					end ASC, country_long ASC
 					LIMIT 15";
-			\Ibt\Errors::log ($query);
+
 			$locations = Location::fetch( $query );
 
 			foreach($locations as $index => $location) {

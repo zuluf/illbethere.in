@@ -10,11 +10,22 @@ use \Ibt\Config as IbtConfig;
  */
 class Config {
 
+	/**
+	 * Loads default app config object
+	 *
+	 * @return object
+	 */
 	public static function load () {
-		return static::defineGlobals ( IbtConfig::load() );
+		return IbtConfig::load();
 	}
 
-	private static function defineGlobals ( $config = false ) {
-		return $config;
+	/**
+	 * Returns app config object or a selected item from a $config param
+	 *
+	 * @param  string  $config
+	 * @return mixed
+	 */
+	public static function get ( $config = false ) {
+		return IbtConfig::get( $config );
 	}
 }

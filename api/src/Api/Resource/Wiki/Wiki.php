@@ -17,14 +17,14 @@ class Wiki {
 	 *
 	 * @var string;
 	 */
-	const __wiki_api__ = "https://en.wikipedia.org/w/api.php?format=json&action=query&continue&";
+	const wiki_uri = "https://en.wikipedia.org/w/api.php?format=json&action=query&continue&";
 
 	/**
 	 * Wikivoyage default api url
 	 *
 	 * @var string;
 	 */
-	const __voyage_api__ = "https://en.wikivoyage.org/w/api.php?format=json&action=query&continue&";
+	const voyage_uri = "https://en.wikivoyage.org/w/api.php?format=json&action=query&continue&";
 
 	/**
 	 * Returns the given location wikipedia|wikivoyage info
@@ -61,7 +61,7 @@ class Wiki {
 
 		$page = static::wikiGeosearch( $location );
 
-		if ( ! empty ( $page ) ) {
+ 		if ( ! empty ( $page ) ) {
 			$insert = (object) array (
 				'location_id' => $location->location_id,
 				'page_id' => $page->pageid,
@@ -224,7 +224,7 @@ class Wiki {
 	 * @return object
 	 */
 	public static function getWiki ( $params = array() ) {
-		return static::get( $params, static::__wiki_api__);
+		return static::get( $params, static::wiki_uri);
 	}
 
 	/**
@@ -233,7 +233,7 @@ class Wiki {
 	 * @return object
 	 */
 	public static function getVoyage ( $params = array() ) {
-		return static::get( $params, static::__voyage_api__);
+		return static::get( $params, static::voyage_uri);
 	}
 
 	/**
@@ -246,7 +246,7 @@ class Wiki {
 			return false;
 		}
 
-		$wiki_url =  ($url ? $url : static::__wiki_api__) . http_build_query ( $params, '', '&' );
+		$wiki_url =  ($url ? $url : static::wiki_uri) . http_build_query ( $params, '', '&' );
 		$options = array (
 			'http' => array (
 				'method' => 'GET',

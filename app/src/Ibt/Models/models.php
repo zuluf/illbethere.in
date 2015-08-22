@@ -57,10 +57,8 @@ class Models {
 							$data[$item->{static::$_primary}] = $item;
 						}
 					}
-
 					return $data;
 				}
-
 				return $_data;
 			}
 		}
@@ -103,6 +101,17 @@ class Models {
 	}
 
 	/**
+	 * Prepares the query and binds the given parameter data to the mysqli statement
+	 *
+	 * @param  string  $query
+	 * @param  array   $data
+	 * @return mysqli_stmt|bool
+	 */
+	public static function prepare ( $query = "", $data = array () ) {
+		return Data::prepare( $query, $data );
+	}
+
+	/**
 	 * Executes INSERT query for the current table instance
 	 *
 	 * @param  array  $data    Array of column => value properties for the new data row
@@ -113,18 +122,20 @@ class Models {
 		if ( ! empty ( $data ) ) {
 
 			$columns = implode('`, `', array_keys( $data ) );
-			$repeat = str_repeat ( ', ?', count($columns) );
-			$values = array();
+			$repeat = str_repeat ( ', ?', count( $data ) );
 
-			foreach ($data as $column => $value) {
-				$values[] = is_string( $value ) ? "'" . self::escape( $value ) . "'" : self::escape( $value );
+			$query = "INSERT INTO `" . static::$_table . "` (`" . static::$_primary . "`, `{$columns}`) VALUES (null {$repeat})";
+
+			$statement = static::prepare($query, $data);
+
+			if ( empty ( $statement ) ) {
+				Errors::set ( 'database', 'Insert: ' . Data::errorMessage() , true );
+				return null;
 			}
 
-			$values = implode(', ', $values);
-			$query = "INSERT INTO `" . static::$_table . "` (`" . static::$_primary . "`, `{$columns}`) VALUES (null, {$values})";
+			$statement->execute();
 
-			static::query( $query );
-
+			Errors::log($statement);
 			return Data::insertId();
 		}
 
@@ -225,22 +236,6 @@ class Models {
 	 * @return string
 	 */
 	public static function escape ( $value = false, $match = false ) {
-
-		if ( ! is_string( $value ) ) {
-			return $value;
-		}
-
-		if ( empty( $value ) ) {
-			return "";
-		}
-
-		$value = (string) $value;
-		$value = strip_tags( $value );
-		$value = str_replace( "'%s'", '%s', $value ); // in case someone mistakenly already singlequoted it
-		$value = str_replace( '"%s"', '%s', $value ); // doublequote unquoting
-		$value = preg_replace( '|(?<!%)%f|' , '%F', $value ); // Force floats to be locale unaware
-		$value = preg_replace( '|(?<!%)%s|', "'%s'", $value ); // quote the strings, avoiding escaped strings like %%s
-
 		return Data::escape( $value );
 	}
 
