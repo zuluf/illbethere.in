@@ -20,6 +20,25 @@
 
 		}
 
+		.flickr-list, .panoramio-list {
+			list-style: none;
+			float: left;
+			width: 73%;
+			margin-top: -5px;
+
+			li {
+				float: left;
+				padding: 5px;
+
+				img {
+					.animated(1s, 0.7s);
+					.box-shadow(-1px 1px 5px rgba(42, 44, 42, 0.5));
+					float: left;
+					max-height: 150px;
+				}
+			}
+		}
+
 		.wiki {
 			.wiki-info {
 				.animated(0.4s, 0s);

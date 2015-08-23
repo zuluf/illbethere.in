@@ -5,7 +5,7 @@ namespace Api\Resource;
 use \Api\Config;
 use \Ibt\Errors;
 use \Ibt\Models\Locations;
-use \Ibt\Models\Flickr as ModelFlickr;
+use \Ibt\Models\Flickr as IbtFlickr;
 
 /**
  * Class Api\Resource\Flickr
@@ -28,11 +28,11 @@ class Flickr {
 	const photo_uri = "https://www.flickr.com/photos/";
 
 	/**
-	 * Default request params
+	 * Text search request params
 	 *
 	 * @var array;
 	 */
-	private static $_defaultParams = array (
+	private static $_textParams = array (
 		'sort' => 'relevance',
 		'parse_tags' => 1,
 		'content_type' => 7,
@@ -53,6 +53,31 @@ class Flickr {
 	);
 
 	/**
+	 * Location search request params
+	 *
+	 * @var array;
+	 */
+	private static $_locationParams = array (
+		'lat' => false,
+		'lon' => false,
+		'accuracy' => 10,
+		'content_type' => 7,
+		'extras' => 'media,owner_name,
+			path_alias,realname,rotation,url_l,url_m,url_s',
+		'per_page' => 15,
+		'safe_search' => 3,
+		'page' => 1,
+		'lang' => 'en-US',
+		'media' => 'photos',
+		'text' => '',
+		'advanced' => 1,
+		'method' => 'flickr.photos.geo.photosForLocation',
+		'api_key' => '',
+		'format' => 'json',
+		'nojsoncallback' => 1,
+	);
+
+	/**
 	 * Returns the given location flicker photo search result
 	 *
 	 * @return array
@@ -69,12 +94,12 @@ class Flickr {
 			return false;
 		}
 
-		$flickr = ModelFlickr::get ( array ( 'location_id' => $location->location_id ) );
+		$flickr = IbtFlickr::get ( array ( 'location_id' => $location->location_id ), true );
 		if ( ! empty ( $flickr ) ) {
 			return $flickr;
 		}
 
-		$params = static::$_defaultParams;
+		$params = static::$_textParams;
 		$params['text'] = $location->name;
 		$params['api_key'] = $config->apiKey;
 
@@ -100,7 +125,7 @@ class Flickr {
 		}
 
 		$photos = isset ( $response->photos ) && ! empty( $response->photos ) ? $response->photos : false;
-		if ( empty( $photos ) || ! isset( $photos[ 'photo' ] ) || empty( $photos[ 'photo' ] ) ) {
+		if ( empty( $photos ) || ! isset( $photos[ 'photo' ] ) ) {
 			return false;
 		}
 
@@ -109,22 +134,24 @@ class Flickr {
 			'photos' => array ()
 		);
 
-		foreach ( $photos[ 'photo' ] as $photo) {
-			$insert->photos[] = array (
-				'photo_id' => $photo[ 'id' ],
-				'owner_id' => $photo[ 'owner' ],
-				'owner_name' => $photo[ 'ownername' ],
-				'pathalias' => isset ( $photo[ 'pathalias' ] ) ? $photo[ 'pathalias' ] : "",
-				'photo_uri' => static::photo_uri .
-					(! empty( $photo[ 'pathalias' ] ) ? $photo[ 'pathalias' ] : $photo[ 'owner' ] ) . '/' . $photo[ 'id' ],
-				'title' => $photo[ 'title' ],
-				'large' => isset ( $photo[ 'url_l' ] ) ? $photo[ 'url_l' ] : "",
-				'medium' => isset ( $photo[ 'url_m' ] ) ? $photo[ 'url_m' ] : "",
-				'small' => isset ( $photo[ 'url_s' ] ) ? $photo[ 'url_s' ] : ""
-			);
+		if ( ! empty( $photos[ 'photo' ] ) ) {
+			foreach ( $photos[ 'photo' ] as $photo) {
+				$insert->photos[] = array (
+					'photo_id' => $photo[ 'id' ],
+					'owner_id' => $photo[ 'owner' ],
+					'owner_name' => $photo[ 'ownername' ],
+					'pathalias' => isset ( $photo[ 'pathalias' ] ) ? $photo[ 'pathalias' ] : "",
+					'photo_uri' => static::photo_uri .
+						(! empty( $photo[ 'pathalias' ] ) ? $photo[ 'pathalias' ] : $photo[ 'owner' ] ) . '/' . $photo[ 'id' ],
+					'title' => $photo[ 'title' ],
+					'large' => isset ( $photo[ 'url_l' ] ) ? $photo[ 'url_l' ] : "",
+					'medium' => isset ( $photo[ 'url_m' ] ) ? $photo[ 'url_m' ] : "",
+					'small' => isset ( $photo[ 'url_s' ] ) ? $photo[ 'url_s' ] : ""
+				);
+			}
 		}
 
-		return ModelFlickr::insert ( $insert );
+		return IbtFlickr::insert ( $insert );
 	}
 
 	/**

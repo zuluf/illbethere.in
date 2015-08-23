@@ -32,6 +32,14 @@
 
 			wiki : function (locationId) {
 				return this.request('wiki/location/' + locationId);
+			},
+
+			flickr : function (locationId) {
+				return this.request('flickr/location/' + locationId);
+			},
+
+			panoramio : function (locationId) {
+				return this.request('panoramio/location/' + locationId);
 			}
 		}
 	);
