@@ -5,7 +5,7 @@ namespace Api\Resource;
 use \Api\Config;
 use \Ibt\Errors;
 use \Ibt\Models\Locations;
-use \Ibt\Models\Panoramio as IbtPanoramio;
+use \Ibt\Models\Panoramio as Model;
 
 /**
  * Class Api\Resource\Panoramio
@@ -46,16 +46,21 @@ class Panoramio {
 	/**
 	 * Returns the given location panoramio photo search result
 	 *
-	 * @return array
+	 * @return bool|object
 	 */
 	public static function location ( $location_id = false ) {
+
+		$location_id = (int) $location_id;
+		if ( empty( $location_id ) ) {
+			return false;
+		}
 
 		$location = Locations::get ( array ( 'location_id' => $location_id ), true );
 		if ( empty( $location ) ) {
 			return false;
 		}
 
-		$photos = IbtPanoramio::get ( array ( 'location_id' => $location->location_id ), true );
+		$photos = Model::get ( array ( 'location_id' => $location->location_id ), true );
 		if ( ! empty ( $photos ) ) {
 			return $photos;
 		}
@@ -122,7 +127,7 @@ class Panoramio {
 				'photos' => $response->photos
 			);
 
-			return IbtPanoramio::insert ( $insert );
+			return Model::insert ( $insert );
 		}
 
 		return false;

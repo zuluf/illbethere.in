@@ -179,7 +179,7 @@ class Data {
 	 * @param  array   $data
 	 * @return mysqli_stmt|bool
 	 */
-	public static function prepare ( $query = "", $data = array () ) {
+	public static function prepare ( $query = "", $data = array (), $where = array() ) {
 
 		if ( empty ( $query ) || empty( $data ) ) {
 			return $query;
@@ -192,10 +192,18 @@ class Data {
 		$types = "";
 		$values = array();
 
-		foreach ( $data as $column => $value ) {
-			$types .= gettype( $value )[0];
-			$$column = static::escape( $value );
-			$values[] = &$$column;
+		foreach ( $data as $_column => $_value ) {
+			$types .= gettype( $_value )[0];
+			$$_column = static::escape( $_value );
+			$values[] = &$$_column;
+		}
+
+		if ( is_array( $where ) && ! empty( $where ) ) {
+			foreach ( $where as $_column => $_value ) {
+				$types .= gettype( $_value )[0];
+				$$_column = static::escape( $_value );
+				$values[] = &$$_column;
+			}
 		}
 
 		array_unshift ( $values, $types );

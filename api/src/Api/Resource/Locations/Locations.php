@@ -2,7 +2,7 @@
 
 namespace Api\Resource;
 
-use \Ibt\Models\Locations as Location;
+use \Ibt\Models\Locations as Model;
 use \Ibt\Models\Countries;
 
 /**
@@ -17,7 +17,7 @@ class Locations {
 	 * @return array
 	 */
 	public static function find ( $query = false ) {
-		return Location::find( $query );
+		return Model::find( $query );
 	}
 
 	/**
@@ -27,7 +27,7 @@ class Locations {
 	 */
 	public static function get ( $location_id = false ) {
 		if ( ! empty( $location_id ) ) {
-			return Location::get( array('location_id' => $location_id), true );
+			return Model::get( array('location_id' => $location_id), true );
 		}
 
 		return false;

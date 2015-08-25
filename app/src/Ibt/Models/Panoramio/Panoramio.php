@@ -40,13 +40,11 @@ class Panoramio extends Models {
 	 */
 	public static function get ( $where = array(), $unique = false ) {
 
-		$panoramio = parent::get( $where, $unique );
+		$panoramio = parent::get( $where );
 
 		if ( ! empty ( $panoramio ) ) {
-			$panoramio = ! is_array ( $panoramio ) ? array ( $panoramio ) : $panoramio;
-
 			foreach ( $panoramio as & $value ) {
-				$value->photos = array_values((array) json_decode( base64_decode( $value->photos ) ) );
+				$value->photos = array_values((array) static::decode( $value->photos ) );
 			}
 
 			return $unique ? array_shift( $panoramio ) : $panoramio;
@@ -66,14 +64,10 @@ class Panoramio extends Models {
 		if ( ! empty ( $data ) ) {
 			$insert = array (
 				'location_id' => (int) $data->location_id,
-				'photos' => base64_encode( json_encode( $data->photos, JSON_UNESCAPED_UNICODE ) )
+				'photos' => static::encode( $data->photos )
 			);
 
-			$panoramio_id = parent::insert ( $insert );
-
-			if ( ! empty ( $panoramio_id ) ) {
-				return static::get ( array ( 'panoramio_id' => $panoramio_id ), true );
-			}
+			return parent::insert ( $insert );
 		}
 
 		return false;

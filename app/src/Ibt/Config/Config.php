@@ -45,8 +45,8 @@ class Config {
 
 			$config = array();
 
-			if ( is_file( __DIR__ . DIRECTORY_SEPARATOR . 'file.php' ) ) {
-				$config = include __DIR__ . DIRECTORY_SEPARATOR . 'file.php'; // dont forget to set permissions to 0400
+			if ( is_file( __DIR__ . DIRECTORY_SEPARATOR . 'files/file.php' ) ) {
+				$config = include __DIR__ . DIRECTORY_SEPARATOR . 'files/file.php'; // dont forget to set permissions to 0400
 			} else {
 				Errors::log('config', 'Your config file is missing!');
 				Errors::set('system', 'Something went wrong. <br /> Please refresh the page and if the issue continues, find a better website to waste your time :)');

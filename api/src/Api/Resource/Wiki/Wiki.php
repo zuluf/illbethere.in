@@ -4,7 +4,7 @@ namespace Api\Resource;
 
 use \Ibt\Errors;
 use \Ibt\Models\Locations;
-use \Ibt\Models\Wiki as Wikies;
+use \Ibt\Models\Wiki as Model;
 
 /**
  * Class Api\Resource\Wiki
@@ -29,27 +29,26 @@ class Wiki {
 	/**
 	 * Returns the given location wikipedia|wikivoyage info
 	 *
-	 * @return array
+	 * @return bool|object
 	 */
 	public static function location ( $location_id = false ) {
 
-		if ( empty($location_id) ) {
-			return;
+		$location_id = (int) $location_id;
+		if ( empty( $location_id ) ) {
+			return false;
 		}
 
-		$location = Locations::get( array( 'location_id' => (int) $location_id ), true );
-
-		if ( !empty($location) ) {
-			$wiki = Wikies::get ( array( 'location_id' => $location->location_id ), true );
-
-			if ( empty( $wiki ) ) {
-				$wiki = static::addLocationWiki ( $location );
-			}
-
-			return ! empty($wiki) ? $wiki : array();
+		$location = Locations::get ( array ( 'location_id' => $location_id ), true );
+		if ( empty( $location ) ) {
+			return false;
 		}
 
-		return array();
+		$wiki = Model::get ( array( 'location_id' => $location->location_id ), true );
+		if ( ! empty ( $wiki ) ) {
+			return $wiki;
+		}
+
+		return static::addLocationWiki ( $location );
 	}
 
 	/**
@@ -71,7 +70,7 @@ class Wiki {
 				'geosearch' => $page->geosearch
 			);
 
-			return Wikies::insert ( $insert );
+			return Model::insert ( $insert );
 		}
 	}
 

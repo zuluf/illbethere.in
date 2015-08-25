@@ -5,7 +5,7 @@ namespace Api\Resource;
 use \Api\Config;
 use \Ibt\Errors;
 use \Ibt\Models\Locations;
-use \Ibt\Models\Flickr as IbtFlickr;
+use \Ibt\Models\Flickr as Model;
 
 /**
  * Class Api\Resource\Flickr
@@ -80,12 +80,12 @@ class Flickr {
 	/**
 	 * Returns the given location flicker photo search result
 	 *
-	 * @return array
+	 * @return bool|object
 	 */
 	public static function location ( $location_id = false ) {
 
-		$config = Config::get ( 'flickr' );
-		if ( empty( $config ) || ! isset ( $config->apiKey ) || empty( $config->apiKey ) ) {
+		$location_id = (int) $location_id;
+		if ( empty( $location_id ) ) {
 			return false;
 		}
 
@@ -94,9 +94,14 @@ class Flickr {
 			return false;
 		}
 
-		$flickr = IbtFlickr::get ( array ( 'location_id' => $location->location_id ), true );
+		$flickr = Model::get ( array ( 'location_id' => $location->location_id ), true );
 		if ( ! empty ( $flickr ) ) {
 			return $flickr;
+		}
+
+		$config = Config::get ( 'flickr' );
+		if ( empty( $config ) || ! isset ( $config->apiKey ) || empty( $config->apiKey ) ) {
+			return false;
 		}
 
 		$params = static::$_textParams;
@@ -151,7 +156,7 @@ class Flickr {
 			}
 		}
 
-		return IbtFlickr::insert ( $insert );
+		return Model::insert ( $insert );
 	}
 
 	/**

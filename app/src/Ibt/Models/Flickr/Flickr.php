@@ -40,13 +40,11 @@ class Flickr extends Models {
 	 */
 	public static function get ( $where = array(), $unique = false ) {
 
-		$flickr = parent::get( $where, $unique );
+		$flickr = parent::get( $where );
 
 		if ( ! empty ( $flickr ) ) {
-			$flickr = ! is_array ( $flickr ) ? array ( $flickr ) : $flickr;
-
 			foreach ( $flickr as & $value ) {
-				$value->photos = array_values((array) json_decode( base64_decode( $value->photos ) ) );
+				$value->photos = array_values((array) static::decode( $value->photos ) );
 			}
 
 			return $unique ? array_shift( $flickr ) : $flickr;
@@ -66,14 +64,10 @@ class Flickr extends Models {
 		if ( ! empty ( $data ) ) {
 			$insert = array (
 				'location_id' => (int) $data->location_id,
-				'photos' => base64_encode( json_encode( $data->photos, JSON_UNESCAPED_UNICODE ) )
+				'photos' => static::encode( $data->photos )
 			);
 
-			$flickr_id = parent::insert ( $insert );
-
-			if ( ! empty ( $flickr_id ) ) {
-				return static::get ( array ( 'flickr_id' => $flickr_id ), true );
-			}
+			return parent::insert ( $insert );
 		}
 
 		return false;

@@ -1,9 +1,9 @@
 <IfModule mod_headers.c>
 	<FilesMatch "\.(bmp|css|flv|gif|ico|jpg|jpeg|js|pdf|png|svg|swf|tif|tiff)$">
 		Header unset ETag
-		Header set Last-Modified "Sun, 23 Aug 2015 16:37:51 GMT"
+		Header set Last-Modified "Tue, 25 Aug 2015 15:36:30 GMT"
 		Header set Cache-Control "public, max-age=31536000"
-		Header set Expires "Sat, 23 Jul 2016 16:37:51 GMT"
+		Header set Expires "Mon, 25 Jul 2016 15:36:30 GMT"
 	</FilesMatch>
 </IfModule>
 FileETag None

@@ -3,11 +3,12 @@
 namespace Ibt\Pages;
 
 use \Ibt\Pages;
+use \Ibt\Errors;
 use \Ibt\Templates;
 use \Ibt\Models\Locations;
 
 /**
- *	Class Go
+ *	Class \Ibt\Pages\Go
  *
  */
 class Go extends Pages {
@@ -32,6 +33,10 @@ class Go extends Pages {
 
 		if ( ! empty( static::$_params ) ) {
 			$location = Locations::get( array('location_id' => array_shift( static::$_params ) ), true );
+
+			if ( ! empty( $location ) ) {
+				$location->rank = $location->rank(1);
+			}
 		}
 
 		static::$_data = (array) $location;

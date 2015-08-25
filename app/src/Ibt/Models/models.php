@@ -5,6 +5,7 @@ namespace Ibt;
 use \App\Includes\Dbase;
 use \Ibt\Errors;
 use \Ibt\Data;
+use \Ibt\Date;
 
 /**
  *	Class Ibt\Models
@@ -84,11 +85,13 @@ class Models {
 			foreach ( $_data as $item ) {
 				if ( !empty( $item ) && $item->{static::$_primary} ) {
 
+					$instance = new static;
+
 					foreach ( (array) $item as $column => $value ) {
-						$item->{$column} = is_string( $value ) ? stripslashes( $value ) : $value;
+						$instance->{$column} = is_string( $value ) ? stripslashes( $value ) : $value;
 					}
 
-					$data[$item->{static::$_primary}] = $item;
+					$data[$item->{static::$_primary}] = $instance;
 				}
 			}
 		}
@@ -107,15 +110,15 @@ class Models {
 	 * @param  array   $data
 	 * @return mysqli_stmt|bool
 	 */
-	public static function prepare ( $query = "", $data = array () ) {
-		return Data::prepare( $query, $data );
+	public static function prepare ( $query = "", $data = array(), $where = array() ) {
+		return Data::prepare( $query, $data, $where );
 	}
 
 	/**
 	 * Executes INSERT query for the current table instance
 	 *
 	 * @param  array  $data    Array of column => value properties for the new data row
-	 * @return bool|int 	   Returns false on failure, or the table primary_id value for the inserted row
+	 * @return object|int 	   Returns false on failure, or the table primary_id value for the inserted row
 	 */
 	public static function insert ( $data = array () ) {
 
@@ -126,17 +129,65 @@ class Models {
 
 			$query = "INSERT INTO `" . static::$_table . "` (`" . static::$_primary . "`, `{$columns}`) VALUES (null {$repeat})";
 
-			$statement = static::prepare($query, $data);
+			$statement = static::prepare( $query, $data );
 
 			if ( empty ( $statement ) ) {
 				Errors::set ( 'database', 'Insert: ' . Data::errorMessage() , true );
-				return null;
+				return false;
 			}
 
-			$statement->execute();
+			if ( ! $statement->execute() ) {
+				Errors::set ( 'database', 'Insert: ' . Data::errorMessage() , true );
+				return false;
+			}
 
-			Errors::log($statement);
-			return Data::insertId();
+			return static::get( array ( static::$_primary => Data::insertId() ), true );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Executes UPDATE query for the current table instance
+	 *
+	 * @param  array  $data    Array of column => value properties for the new data row
+	 * @param  array  $where   Array of column => value properties for WHERE statement
+	 * @return bool|array 	   Returns false on failure, or the updated row
+	 */
+	public static function update ( $data = array (), $where = array() ) {
+
+		if ( empty ( $where ) || ! is_array( $where ) ) {
+			Errors::set ( 'database', 'Update `'. static::$_table .'`: please limit update queries with WHERE condition', true );
+			return false;
+		}
+
+		if ( ! empty( $data ) ) {
+
+			foreach ( array( 'created_at', 'updated_at', 'deleted_at' ) as $timestamp ) {
+				if ( isset( $data[ $timestamp ] ) ) {
+					unset( $data[ $timestamp ] );
+				}
+			}
+
+			$data[ 'updated_at' ] = Date::mysqli();
+
+			$columns = '`' . implode('` = ?, `', array_keys( $data ) ) . '` = ?';
+			$condition = '`' . implode('` = ? AND `', array_keys( $where ) ) . '` = ?';
+			$query = "UPDATE  `" . static::$_table . "` SET {$columns} WHERE {$condition};";
+
+			$statement = static::prepare( $query, $data, $where );
+
+			if ( empty ( $statement ) ) {
+				Errors::set ( 'database', 'Update: ' . Data::errorMessage() , true );
+				return false;
+			}
+
+			if ( ! $statement->execute() ) {
+				Errors::set ( 'database', 'Update: ' . Data::errorMessage() , true );
+				return false;
+			}
+
+			return static::get( $where, true );
 		}
 
 		return false;
@@ -168,9 +219,9 @@ class Models {
 			if ( $_order ) {
 				if ( ! empty( $where[ 'order' ][ $_order ] ) ) {
 					if ( is_array( $where[ 'order' ][ $_order ] ) ) {
-						$_order = " ORDER BY `" . implode( "`, `", array_map( 'self::escape', $where[ 'order' ][ $_order ] ) ) . "` {$_order}";
+						$_order = " ORDER BY `" . implode( "`, `", array_map( 'static::escape', $where[ 'order' ][ $_order ] ) ) . "` {$_order}";
 					} else {
-						$_order = " ORDER BY " . self::escape( $where[ 'order' ][ $_order ] ) . " {$_order}";
+						$_order = " ORDER BY " . static::escape( $where[ 'order' ][ $_order ] ) . " {$_order}";
 					}
 
 					unset( $where[ 'order' ] );
@@ -207,12 +258,12 @@ class Models {
 				}
 
 				if ( ! is_array( $value ) ) {
-					$key = self::escape( $key );
-					$value = self::escape( $value );
-					$compare = self::escape( $compare );
+					$key = static::escape( $key );
+					$value = static::escape( $value );
+					$compare = static::escape( $compare );
 					$where[$key] = "`{$key}` {$compare} '{$value}'";
 				} else {
-					array_walk( $value, 'self::escape' );
+					array_walk( $value, 'static::escape' );
 					$where[$key] = "`{$key}` in ('". implode("','", $value)."')";
 				}
 			}
@@ -235,7 +286,7 @@ class Models {
 	 * @param  string   $value
 	 * @return string
 	 */
-	public static function escape ( $value = false, $match = false ) {
+	public static function escape ( $value = false ) {
 		return Data::escape( $value );
 	}
 
@@ -247,9 +298,39 @@ class Models {
 	 */
 	public static function urlencode ( $value = '' ) {
 		if ( ! empty( $value ) ) {
-			return self::escape( urldecode( $value ) );
+			return static::escape( urldecode( $value ) );
 		}
 
 		return "";
+	}
+
+	/**
+	 * Encodes text values ( json )
+	 *
+	 * @param  mixed   $value
+	 * @return string
+	 */
+	public static function encode ( $value ) {
+		return base64_encode ( json_encode( $value, JSON_UNESCAPED_UNICODE ) );
+	}
+
+	/**
+	 * Decodes text values ( json )
+	 *
+	 * @param  string   $value
+	 * @return string
+	 */
+	public static function decode ( $value = '' ) {
+		return json_decode( base64_decode( $value ), true );
+	}
+
+	/**
+	 * Updates the model instance with the new set of data
+	 *
+	 * @param  array   $data
+	 * @return \Ibt\Models\* instance|bool
+	 */
+	public function save ( array $data = array() ) {
+		return static::update( $data, array ( static::$_primary => $this->{static::$_primary} ) );
 	}
 }

@@ -45,7 +45,7 @@ class Wiki extends Models {
 			$wiki = ! is_array ( $wiki ) ? array ( $wiki ) : $wiki;
 
 			foreach ( $wiki as & $value ) {
-				$value->geosearch = array_slice (array_values((array) json_decode( base64_decode( $value->geosearch ) ) ), 0, 10);
+				$value->geosearch = array_slice (array_values( (array) static::decode( $value->geosearch ) ), 0, 10);
 				$value->fullurl = urldecode( $value->fullurl );
 				$value->extract = stripslashes( $value->extract );
 			}
@@ -71,14 +71,10 @@ class Wiki extends Models {
 				'title' => trim ( $wikipage->title ),
 				'fullurl' => urlencode ( $wikipage->fullurl ),
 				'extract' => preg_replace('/[\r\n\t]/', ' ', trim ( $wikipage->extract ) ),
-				'geosearch' => base64_encode( json_encode( $wikipage->geosearch, JSON_UNESCAPED_UNICODE ) )
+				'geosearch' => static::encode( $wikipage->geosearch )
 			);
 
-			$wiki_id = parent::insert ( $insert );
-
-			if ( ! empty ( $wiki_id ) ) {
-				return static::get ( array ( 'wiki_id' => $wiki_id ), true );
-			}
+			return parent::insert ( $insert );
 		}
 
 		return false;

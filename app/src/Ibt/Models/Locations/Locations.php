@@ -85,4 +85,25 @@ class Locations extends Models {
 
 		return array_values( $locations );
 	}
+
+	/**
+	 * Update location rank value; Accepts positive and negative integers
+	 *
+	 * @param  int 	$location_id
+	 * @param  int 	$rank
+	 * @return int|bool
+	 */
+	public function rank ( $rank = 0 ) {
+
+		$rank = (int) $rank;
+		if ( $rank === 0 ) {
+			return false;
+		}
+
+		$rank = $this->rank + $rank;
+
+		$this->save( array ( 'rank' => $rank ) );
+
+		return $rank;
+	}
 }
